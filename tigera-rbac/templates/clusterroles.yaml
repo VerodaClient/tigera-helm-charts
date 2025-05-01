@@ -1,0 +1,227 @@
+{{/* Always create the basic UI ClusterRole */}}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: tigera-basic-ui
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - namespaces
+  verbs:
+  - watch
+  - list
+- apiGroups:
+  - projectcalico.org
+  resources:
+  - managedclusters
+  verbs:
+  - watch
+  - list
+- apiGroups:
+  - ""
+  resourceNames:
+  - https:tigera-api:8080
+  - calico-node-prometheus:9090
+  resources:
+  - services/proxy
+  verbs:
+  - get
+  - create
+- apiGroups:
+  - projectcalico.org
+  resources:
+  - clusterinformations
+  verbs:
+  - get
+  - list
+- apiGroups:
+  - projectcalico.org
+  resources:
+  - authorizationreviews
+  verbs:
+  - create
+- apiGroups:
+  - projectcalico.org
+  resourceNames:
+  - cluster-settings
+  - user-settings
+  resources:
+  - uisettingsgroups
+  verbs:
+  - get
+- apiGroups:
+  - projectcalico.org
+  resourceNames:
+  - cluster-settings
+  resources:
+  - uisettingsgroups/data
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - projectcalico.org
+  resourceNames:
+  - user-settings
+  resources:
+  - uisettingsgroups/data
+  verbs:
+  - '*'
+- apiGroups:
+  - operator.tigera.io
+  resourceNames:
+  - tigera-secure
+  resources:
+  - applicationlayers
+  verbs:
+  - get
+- apiGroups:
+  - ""
+  resources:
+  - services
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - lma.tigera.io
+  resourceNames:
+  - flows
+  - audit*
+  - l7
+  - events
+  - dns
+  - waf
+  - kibana_login
+  resources:
+  - '*'
+  verbs:
+  - get
+- apiGroups:
+  - projectcalico.org
+  resources:
+  - packetcaptures/files
+  verbs:
+  - get
+- apiGroups:
+  - projectcalico.org
+  resources:
+  - packetcaptures
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - operator.tigera.io
+  resources:
+  - applicationlayers
+  - packetcaptureapis
+  - compliances
+  - intrusiondetections
+  verbs:
+  - get
+- apiGroups:
+  - projectcalico.org
+  resources:
+  - alertexceptions
+  - globalalerts
+  - globalalerts/status
+  - globalalerttemplates
+  - globalthreatfeeds
+  - globalthreatfeeds/status
+  - securityeventwebhooks
+  verbs:
+  - get
+  - watch
+  - list
+- apiGroups:
+  - projectcalico.org
+  resourceNames:
+  - app
+  resources:
+  - tiers
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - projectcalico.org
+  resources:
+  - tiers
+  verbs:
+  - list
+---
+{{/* Conditionally create namespace ClusterRole */}}
+{{- if eq .Values.accessMode "ro" }}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: namespace-views
+rules:
+- apiGroups:
+  - projectcalico.org
+  resources:
+  - networksets
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - ""
+  resources:
+  - pods
+  verbs:
+  - list
+- apiGroups:
+  - projectcalico.org
+  resourceNames:
+  - app.*
+  resources:
+  - tier.networkpolicies
+  - tier.stagednetworkpolicies
+  verbs:
+  - get
+  - list
+  - watch
+{{- else }}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: namespace-edits
+rules:
+- apiGroups:
+  - projectcalico.org
+  resources:
+  - networksets
+  verbs:
+  - get
+  - list
+  - watch
+  - create
+  - update
+  - delete
+  - patch
+- apiGroups:
+  - ""
+  resources:
+  - pods
+  verbs:
+  - list
+- apiGroups:
+  - projectcalico.org
+  resourceNames:
+  - app.*
+  resources:
+  - tier.networkpolicies
+  - tier.stagednetworkpolicies
+  verbs:
+  - get
+  - list
+  - watch
+  - create
+  - update
+  - patch
+  - delete
+{{- end }}
+

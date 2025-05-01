@@ -1,0 +1,17 @@
+{{- range .Values.namespaces }}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: {{ printf "%s-%s-%s" $.Values.serviceAccount.name . $.Values.accessMode | trunc 63 }}
+  namespace: {{ . }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: {{ if eq $.Values.accessMode "ro" }}namespace-views{{ else }}namespace-edits{{ end }}
+subjects:
+- kind: ServiceAccount
+  name: {{ $.Values.serviceAccount.name }}
+  namespace: {{ $.Values.serviceAccount.namespace }}
+---
+{{- end }}
+

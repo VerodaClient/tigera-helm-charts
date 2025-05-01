@@ -1,0 +1,5 @@
+apiVersion: v2
+name: tigera-rbac
+description: Deploy Tigera RBAC based on access mode and namespaces
+type: application
+version: 0.1.0

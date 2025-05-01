@@ -1,0 +1,11 @@
+# ServiceAccount details
+serviceAccount:
+  name: hipster-ro
+  namespace: hipstershop
+
+# Access mode: "ro" or "rw"
+accessMode: ro
+
+# Target namespaces
+namespaces:
+  - hipstershop

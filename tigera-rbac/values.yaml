@@ -1,11 +1,9 @@
-# ServiceAccount details
-serviceAccount:
-  name: hipster-ro
-  namespace: hipstershop
+subject:
+  kind: Group         # or "User"
+  name: dev-team      # your actual group or username
 
-# Access mode: "ro" or "rw"
-accessMode: ro
-
-# Target namespaces
+accessMode: ro         # or "rw"
 namespaces:
   - hipstershop
+  - frontend
+

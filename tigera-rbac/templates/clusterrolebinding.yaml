@@ -1,13 +1,12 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: {{ printf "%s-basic-ui-%s" .Values.serviceAccount.name .Values.accessMode | trunc 63 }}
+  name: {{ printf "%s-basic-ui-%s" .Values.subject.name .Values.accessMode | trunc 63 | lower }}
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
   name: tigera-basic-ui
 subjects:
-- kind: ServiceAccount
-  name: {{ .Values.serviceAccount.name }}
-  namespace: {{ .Values.serviceAccount.namespace }}
+- kind: {{ .Values.subject.kind }}
+  name: {{ .Values.subject.name }}
 

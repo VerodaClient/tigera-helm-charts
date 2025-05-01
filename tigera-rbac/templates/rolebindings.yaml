@@ -2,16 +2,15 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
-  name: {{ printf "%s-%s-%s" $.Values.serviceAccount.name . $.Values.accessMode | trunc 63 }}
+  name: {{ printf "%s-%s-%s" $.Values.subject.name . $.Values.accessMode | trunc 63 | lower }}
   namespace: {{ . }}
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
   name: {{ if eq $.Values.accessMode "ro" }}namespace-views{{ else }}namespace-edits{{ end }}
 subjects:
-- kind: ServiceAccount
-  name: {{ $.Values.serviceAccount.name }}
-  namespace: {{ $.Values.serviceAccount.namespace }}
+- kind: {{ $.Values.subject.kind }}
+  name: {{ $.Values.subject.name }}
 ---
 {{- end }}
 
